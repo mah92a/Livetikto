@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>بث مباشر + تنبيه فولو</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    #background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.6);
+    }
+
+    .camera-frame, .screen-frame {
+      position: absolute;
+      left: 8%;
+      width: 80%;
+      border: 3px solid #c5c9ff;
+      border-radius: 12px;
+      box-shadow: 0 0 8px 2px #c5c9ff;
+      animation: softBorderColor 6s linear infinite;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .camera-frame { top: 7%; height: 25%; }
+    .screen-frame { top: 40%; height: 55%; }
+
+    .camera-frame video,
+    .screen-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .like-container {
+      position: fixed;
+      top: 10%;
+      right: 5%;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      font-size: 2em;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    }
+
+    .like-heart {
+      animation: pulse 1s infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .welcome-message {
+      position: fixed;
+      bottom: 60%;
+      left: -100%;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      padding: 10px 25px;
+      white-space: nowrap;
+      animation: scrollMessage 27s linear infinite;
+      z-index: 2;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes scrollMessage {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .gif-alert {
+      position: fixed;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      filter: brightness(1);
+    }
+
+    .donation-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      z-index: 20;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .donation-video {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .donation-name {
+      margin-top: 20px;
+      font-size: 3em;
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .like-achievement {
+      position: fixed;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #fff;
+      padding: 20px 40px;
+      border-radius: 15px;
+      z-index: 999;
+      display: none;
+      text-shadow:
+        0 0 5px #0ff,
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 40px #0ff,
+        0 0 80px #0ff;
+      animation: neonGlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes neonGlow {
+      0%, 100% {
+        text-shadow:
+          0 0 5px #0ff,
+          0 0 10px #0ff,
+          0 0 20px #0ff,
+          0 0 40px #0ff,
+          0 0 80px #0ff;
+        color: #fff;
+      }
+      50% {
+        text-shadow:
+          0 0 10px #f0f,
+          0 0 20px #f0f,
+          0 0 40px #f0f,
+          0 0 80px #f0f,
+          0 0 100px #f0f;
+        color: #f0f;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- خلفية الفيديو -->
+  <video id="background-video" autoplay loop muted playsinline>
+    <source src="https://files.catbox.moe/78gp9r.mp4" type="video/mp4" />
+    <p>متصفحك لا يدعم تشغيل الفيديو، أو الفيديو فشل في التحميل.</p>
+  </video>
+
+  <!-- كادر الكاميرا -->
+  <div class="camera-frame">
+    <video autoplay muted playsinline>
+      <source src="مسار_فيديو_الكاميرا" type="video/mp4" />
+      <p>لم يتم تحميل الفيديو، يرجى التأكد من المسار.</p>
+    </video>
+  </div>
+
+  <!-- كادر السكرين شير -->
+  <div class="screen-frame">
+    <video autoplay muted playsinline>
+      <source src="مسار_سكرين_شير" type="video/mp4" />
+      <p>لم يتم تحميل الفيديو، يرجى التأكد من المسار.</p>
+    </video>
+  </div>
+
+  <!-- الرسالة الخاصة بالتكبيسات -->
+  <div class="like-achievement" id="like-achievement"></div>
+
+  <!-- الرسالة الترحيبية -->
+  <div class="welcome-message">
+    😂💥 يا مراحب باللي دخلوووو 🎉🎉... كبسو و شيرو ❤️❤️🎉🎉... كبسو يا صييييع 😎🔥...
+    يا رب اللي ما يكبس تجيله علياء قمرون فالحلم 👀😂💥 إيدك معانا يا معلم ✋... حتى
+    إلايد البطالة نجسة 🎯
+  </div>
+
+  <!-- تنبيه فولو -->
+  <img class="gif-alert" src="https://files.catbox.moe/r0d2n7.gif" alt="تنبيه فولو"/>
+
+  <!-- حاوية الفيديو واسم المتبرع -->
+  <div class="donation-container" id="donation-container">
+    <video class="donation-video" autoplay>
+      <source src="https://files.catbox.moe/n1aff0.mp4" type="video/mp4" />
+      <p>متصفحك لا يدعم تشغيل الفيديو.</p>
+    </video>
+    <div class="donation-name" id="donation-name">اسم المتبرع: </div>
+  </div>
+
+  <!-- عداد اللايكات -->
+  <div class="like-container">
+    <div id="like-count">0</div>
+    <div class="like-heart">❤️</div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const gifAlert = document.querySelector('.gif-alert');
+      const donationContainer = document.getElementById('donation-container');
+      const donationName = document.getElementById('donation-name');
+      const likeCountElement = document.getElementById('like-count');
+      let likeCount = 0;
+
+      function showGif() {
+        gifAlert.style.opacity = 1;
+        setTimeout(() => {
+          gifAlert.style.opacity = 0;
+        }, 2000);
+      }
+
+      setInterval(showGif, 30000);
+
+      function fetchData() {
+        fetch('https://tiktok-chat-reader.zerody.one/obs.html?username=boxing_604&showLikes=1&showChats=0&showGifts=1&showFollows=1&showJoins=1&bgColor=rgb(24,23,28)&fontColor=rgb(227,229,235)&fontSize=1.3em')
+          .then(response => response.json())
+          .then(data => {
+            if (data.likes) {
+              likeCount = data.likes;
+              likeCountElement.textContent = likeCount;
+              document.querySelector('.like-heart').style.animation = 'pulse 1s infinite';
+            }
+
+            if (data.gifts || data.follows) {
+              donationContainer.style.display = 'flex';
+              if (data.follows) {
+                donationName.textContent = `اسم المتبرع: ${data.follows[0].user}`;
+              }
+              setTimeout(() => {
+                donationContainer.style.display = 'none';
+              }, 5000);
+            }
+
+            if (likeCount >= 1000 && likeCount < 3000) {
+              showAchievementMessage(`شكراً يا [اسم المستخدم] على 1000 تكبيسة! ❤️`);
+            } else if (likeCount >= 3000) {
+              showAchievementMessage(`وحش التكبيس اهو 👉 [اسم المستخدم] 👈 ❤️`);
+            }
+          })
+          .catch(error => console.error('Error fetching data:', error));
+      }
+
+      setInterval(fetchData, 5000);
+    });
+
+    function showAchievementMessage(message) {
+      const achievement = document.getElementById("like-achievement");
+      achievement.textContent = message;
+      achievement.style.display = "block";
+
+      setTimeout(() => {
+        achievement.style.display = "none";
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
